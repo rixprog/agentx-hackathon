@@ -86,37 +86,46 @@ ${body}
   }, [message.content]);
 
   return (
-    <div className={`message-bubble ${isUser ? 'user' : 'agent'}`}>
+    <div className={`flex items-start gap-4 mb-8 ${isUser ? 'flex-row-reverse' : ''}`}>
       {/* Avatar */}
-      <div className={`message-avatar ${isUser ? 'user' : 'agent'}`}>
-        {isUser ? 'YOU' : 'A'}
+      <div className={`
+        w-12 h-12 flex items-center justify-center flex-shrink-0 font-black border-4 text-lg
+        ${isUser 
+          ? 'bg-black border-yellow-300 text-yellow-300' 
+          : 'bg-white border-cyan-400 text-black'
+        }
+      `}>
+        {isUser ? 'U' : 'A'}
       </div>
       
       {/* Message Bubble */}
-      <div className={`message-content ${isUser ? 'user' : 'agent'}`}>
+      <div className={`
+        max-w-[75%] px-6 py-4 border-4 font-bold text-base
+        ${isUser 
+          ? 'bg-black border-yellow-300 text-white rounded-none rounded-br-sm' 
+          : 'bg-gray-900 border-cyan-400 text-white rounded-none rounded-bl-sm'
+        }
+      `}>
         {message.isTyping ? (
-          <div className="flex items-center gap-2 font-atom text-sm">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span className="uppercase font-bold text-agentd-primary">THINKING...</span>
+          <div className="flex items-center gap-2 font-black">
+            <Loader2 className="w-5 h-5 animate-spin text-yellow-300" />
+            <span>THINKING...</span>
           </div>
         ) : (
           <div className="space-y-2">
             {isExecuting && (
-              <div className="flex items-center gap-2 text-xs font-general-sans font-bold opacity-70 border-b border-current pb-2">
+              <div className="flex items-center gap-2 text-sm text-cyan-400 font-black">
                 <Terminal className="w-4 h-4" />
                 <span>EXECUTING COMMAND...</span>
               </div>
             )}
-            <div 
-              className="chat-message-text whitespace-pre-wrap break-words" 
-              style={{ 
-                wordBreak: 'break-word', 
-                overflowWrap: 'break-word',
-                maxWidth: '100%'
-              }}
-            >
+            <div className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed tracking-tight" style={{ 
+              wordBreak: 'break-word', 
+              overflowWrap: 'break-word',
+              maxWidth: '100%'
+            }}>
               {displayedContent.split('\n').map((line, index) => (
-                <div key={index} className={line.trim() === '' ? 'h-2' : ''}>
+                <div key={index} className={line.trim() === '' ? 'h-3' : ''}>
                   {line}
                 </div>
               ))}
