@@ -23,6 +23,7 @@ load_dotenv()
 # Global variables
 _agent = None
 zapier_tools_list = []
+mcp_active = False
 
 def format_system_info(content: str) -> str:
     """Format system information without markdown formatting."""
@@ -126,6 +127,9 @@ async def initialize_agent():
 
     # Initialize Zapier tools (will return empty list if MCP is not available)
     zapier_tools_list = await initialize_and_get_mcp_tools()
+    
+    global mcp_active
+    mcp_active = len(zapier_tools_list) > 0
 
     graph = StateGraph(AgentState)
 
@@ -208,7 +212,7 @@ async def invoke_agent(message: str, config: dict):
 
     # Generate progress steps
     from .progress_gemini import generate_progress_steps
-    progress_steps = generate_progress_steps(message, max_steps=6)
+    progress_steps = generate_progress_steps(message, max_steps=6, mcp_active=mcp_active)
     
     # Yield progress steps
     for i, step in enumerate(progress_steps, 1):

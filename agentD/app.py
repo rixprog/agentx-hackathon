@@ -270,6 +270,103 @@ async def add_chat_message(payload: Dict[str, Any]):
     conn.close()
     return JSONResponse(content={"status": "success"})
 
+# Agent Tasks API
+@app.get("/api/agent_tasks")
+async def get_agent_tasks():
+    """Get all saved agent tasks."""
+    try:
+        conn = sqlite3.connect("memory.sqlite")
+        cursor = conn.cursor()
+        
+        # Create agent_tasks table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS agent_tasks (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                task TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_result TEXT
+            )
+        ''')
+        
+        cursor.execute("SELECT id, name, description, task, created_at, last_result FROM agent_tasks ORDER BY created_at DESC")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        tasks = []
+        for row in rows:
+            tasks.append({
+                "id": row[0],
+                "name": row[1],
+                "description": row[2],
+                "task": row[3],
+                "created_at": row[4],
+                "last_result": row[5]
+            })
+        
+        return JSONResponse(content={"tasks": tasks})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving tasks: {str(e)}")
+
+@app.post("/api/agent_tasks")
+async def create_agent_task(payload: Dict[str, Any]):
+    """Create a new agent task."""
+    name = payload.get("name")
+    description = payload.get("description")
+    task = payload.get("task")
+    
+    if not name or not task:
+        raise HTTPException(status_code=400, detail="Missing name or task.")
+    
+    try:
+        conn = sqlite3.connect("memory.sqlite")
+        cursor = conn.cursor()
+        
+        # Create agent_tasks table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS agent_tasks (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                task TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_result TEXT
+            )
+        ''')
+        
+        task_id = f"task_{int(asyncio.get_event_loop().time() * 1000)}"
+        cursor.execute(
+            "INSERT INTO agent_tasks (id, name, description, task) VALUES (?, ?, ?, ?)",
+            (task_id, name, description, task)
+        )
+        conn.commit()
+        conn.close()
+        
+        return JSONResponse(content={
+            "id": task_id,
+            "name": name,
+            "description": description,
+            "task": task,
+            "created_at": datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating task: {str(e)}")
+
+@app.delete("/api/agent_tasks/{task_id}")
+async def delete_agent_task(task_id: str):
+    """Delete an agent task."""
+    try:
+        conn = sqlite3.connect("memory.sqlite")
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM agent_tasks WHERE id = ?", (task_id,))
+        conn.commit()
+        conn.close()
+        
+        return JSONResponse(content={"status": "success", "message": f"Task {task_id} deleted"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting task: {str(e)}")
+
 # Catch-all route for frontend - This must come LAST
 @app.get("/{full_path:path}", response_class=HTMLResponse)
 async def serve_frontend(request: Request, full_path: str):

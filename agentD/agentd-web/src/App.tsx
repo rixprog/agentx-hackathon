@@ -4,7 +4,8 @@ import { ChatInterface } from './components/ChatInterface';
 import { ChatHistory } from './components/ChatHistory';
 import { MCPServerConfig } from './components/MCPServerConfig';
 import { Dashboard } from './components/Dashboard';
-import { BarChart3, MessageSquare, Settings } from 'lucide-react';
+import { AgentBuilder } from './components/AgentBuilder';
+import { BarChart3, MessageSquare, Settings, Bot } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const location = useLocation();
@@ -12,6 +13,7 @@ const Navigation: React.FC = () => {
   const navItems = [
     { path: '/', icon: <BarChart3 className="w-6 h-6" />, label: 'DASHBOARD' },
     { path: '/chat', icon: <MessageSquare className="w-6 h-6" />, label: 'CHAT' },
+    { path: '/agent-builder', icon: <Bot className="w-6 h-6" />, label: 'AGENT BUILDER' },
     { path: '/settings', icon: <Settings className="w-6 h-6" />, label: 'SETTINGS' },
   ];
 
@@ -60,6 +62,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/chat" element={<ChatInterface />} />
+            <Route path="/agent-builder" element={<AgentBuilder />} />
             <Route path="/settings" element={<MCPServerConfig />} />
           </Routes>
         </main>
