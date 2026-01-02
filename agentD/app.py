@@ -132,6 +132,88 @@ async def list_sessions():
     conn.close()
     return JSONResponse(content={"sessions": sessions})
 
+@app.get("/api/chat_sessions/{session_id}")
+async def get_chat_session_messages(session_id: str):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, role, content, timestamp FROM chat_messages WHERE session_id = ? ORDER BY timestamp ASC", (session_id,))
+    messages = [
+        {"id": row[0], "role": row[1], "content": row[2], "timestamp": row[3]} for row in cursor.fetchall()
+    ]
+    conn.close()
+    return JSONResponse(content={"messages": messages})
+
+@app.post("/api/chat_sessions")
+async def create_chat_session(request: Request):
+    """Create a new chat session. Accepts JSON or form-encoded payloads."""
+    try:
+        try:
+            payload = await request.json()
+        except Exception:
+            # fallback to form data
+            form = await request.form()
+            payload = dict(form)
+
+        session_id = payload.get("id")
+        # Use title if provided, else use first_message, else fallback
+        title = payload.get("title") or payload.get("first_message") or payload.get("message") or "Untitled Chat"
+        now = datetime.utcnow().isoformat()
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO chat_sessions (id, title, created_at, updated_at) VALUES (?, ?, ?, ?)", (session_id, title, now, now))
+        conn.commit()
+        conn.close()
+        return JSONResponse(content={"id": session_id, "title": title, "created_at": now, "updated_at": now})
+    except Exception as e:
+        print(f"Error creating chat session: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creating chat session: {str(e)}")
+
+@app.delete("/api/chat_sessions/{session_id}")
+async def delete_chat_session(session_id: str):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM chat_sessions WHERE id = ?", (session_id,))
+    cursor.execute("DELETE FROM chat_messages WHERE session_id = ?", (session_id,))
+    conn.commit()
+    conn.close()
+    return JSONResponse(content={"status": "success", "message": f"Session {session_id} deleted"})
+
+@app.post("/api/chat_message")
+async def add_chat_message(payload: Dict[str, Any]):
+    session_id = payload.get("session_id")
+    role = payload.get("role")
+    content = payload.get("content")
+    timestamp = payload.get("timestamp", datetime.utcnow().isoformat())
+    if not (session_id and role and content):
+        raise HTTPException(status_code=400, detail="Missing session_id, role, or content.")
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO chat_messages (session_id, role, content, timestamp) VALUES (?, ?, ?, ?)", (session_id, role, content, timestamp))
+    cursor.execute("UPDATE chat_sessions SET updated_at = ? WHERE id = ?", (timestamp, session_id))
+    # If this is the user's first message and the title is generic, update the title
+    if role == "user":
+        cursor.execute("SELECT title FROM chat_sessions WHERE id = ?", (session_id,))
+        row = cursor.fetchone()
+        if row and row[0] in ("Untitled Chat", "New Chat"):
+            cursor.execute("UPDATE chat_sessions SET title = ? WHERE id = ?", (content, session_id))
+    conn.commit()
+    conn.close()
+    return JSONResponse(content={"status": "success"})
+
+@app.post("/api/summarize_chat")
+async def summarize_chat(request: Dict[str, Any]):
+    """Summarize chat history."""
+    try:
+        messages = request.get("messages", [])
+        if not messages:
+            return JSONResponse(content={"summary": "Untitled Chat"})
+
+        summary = await summarize_chat_history(messages)
+        return JSONResponse(content={"summary": summary})
+    except Exception as e:
+        print(f"Error summarizing chat: {e}")
+        raise HTTPException(status_code=500, detail=f"Error summarizing chat: {str(e)}")
+
 # 3. Zapier MCP Configuration
 @app.get("/api/zapier_mcp")
 async def get_zapier_mcp():
@@ -180,6 +262,15 @@ async def create_agent_task(payload: Dict[str, Any]):
     conn.commit()
     conn.close()
     return {"id": task_id, "status": "created"}
+
+@app.delete("/api/agent_tasks/{task_id}")
+async def delete_agent_task(task_id: str):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM agent_tasks WHERE id = ?", (task_id,))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": f"Task {task_id} deleted"}
 
 # --- Catch-all for Frontend ---
 @app.get("/{full_path:path}", response_class=HTMLResponse)
