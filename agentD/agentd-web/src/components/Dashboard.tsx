@@ -97,6 +97,7 @@ const CircularProgress: React.FC<CircularProgressProps> = ({
             strokeDashoffset={offset}
             className="transition-all duration-1000 ease-out"
             strokeLinecap="round"
+            style={{ filter: `drop-shadow(0 0 8px ${color}22)` }}
           />
         </svg>
         {/* Center content */}
@@ -109,7 +110,7 @@ const CircularProgress: React.FC<CircularProgressProps> = ({
           )}
         </div>
         {/* Icon overlay */}
-        <div className="absolute -top-2 -right-2 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full p-2 shadow-lg">
+        <div className="absolute -top-2 -right-2 bg-gradient-to-br from-5f5ce5 via-c3ff16 to-ff8500 rounded-full p-2 shadow-xl">
           {icon}
         </div>
       </div>
@@ -191,34 +192,38 @@ export const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 items-center justify-center">
-        <div className="bg-red-500/20 backdrop-blur-md border border-red-500/30 rounded-xl p-6">
-          <p className="text-red-400">{error}</p>
+      <div className="flex h-screen bg-gradient-to-br from-0f1923 via-1a2942 to-132847 items-center justify-center">
+        <div className="bg-white/15 backdrop-blur-lg border border-white/30 rounded-2xl p-6">
+          <p className="text-red-400 font-general-sans font-semibold">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-0f1923 via-1a2942 to-132847 relative overflow-hidden">
+      {/* Animated gradient blobs */}
+      <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-5f5ce5/20 to-f79cff/15 rounded-full filter blur-3xl animate-pulse pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-f79cff/15 to-c3ff16/10 rounded-full filter blur-3xl animate-pulse pointer-events-none" style={{animationDelay: '1s'}}></div>
+      
       {/* Main Dashboard Area */}
-      <div className="flex-1 flex flex-col backdrop-blur-sm">
+      <div className="flex-1 flex flex-col relative z-10">
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-transparent to-black/20">
+        <div className="flex-1 overflow-y-auto p-6">
           {/* Time Range Selector */}
           <div className="mb-8">
-            <div className="flex items-center space-x-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4">
-              <Clock className="w-5 h-5 text-cyan-400" />
-              <span className="text-sm font-medium text-white/80">Time Range:</span>
+            <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-4">
+              <Clock className="w-5 h-5 text-c3ff16" />
+              <span className="text-sm font-bebas text-white uppercase tracking-wide">Time Range:</span>
               <div className="flex space-x-2">
                 {timeRangeOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => setSelectedTimeRange(option.value)}
-                    className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                    className={`px-4 py-2 text-xs font-bebas rounded-xl transition-all duration-300 uppercase tracking-wider ${
                       selectedTimeRange === option.value
-                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg'
-                        : 'bg-white/10 text-white/70 hover:bg-white/20 border border-white/20'
+                        ? 'bg-white/20 backdrop-blur-xl border border-white/30 text-white shadow-lg'
+                        : 'bg-white/8 backdrop-blur-xl text-white/70 hover:bg-white/12 border border-white/15'
                     }`}
                   >
                     {option.label}
@@ -232,7 +237,7 @@ export const Dashboard: React.FC = () => {
           {currentMetrics && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {/* CPU Usage */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:bg-white/12 transition-all">
                 <CircularProgress
                   value={currentMetrics.cpu_usage}
                   max={100}
@@ -246,7 +251,7 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Memory Usage */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:bg-white/12 transition-all">
                 <CircularProgress
                   value={currentMetrics.memory_usage}
                   max={100}
@@ -260,7 +265,7 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Disk Usage */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:bg-white/12 transition-all">
                 <CircularProgress
                   value={currentMetrics.disk_usage}
                   max={100}
@@ -274,7 +279,7 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Temperature */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:bg-white/12 transition-all">
                 <CircularProgress
                   value={currentMetrics.temperature}
                   max={100}
@@ -294,42 +299,42 @@ export const Dashboard: React.FC = () => {
           {historicalData && historicalData.metrics.length > 0 && (
             <div className="space-y-8">
               {/* CPU and Memory Chart */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-cyan-400" />
+              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 shadow-lg">
+                <h3 className="text-lg font-bebas text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
+                  <Activity className="w-5 h-5 text-c3ff16" />
                   CPU & Memory Usage
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={historicalData.metrics}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
                     <XAxis 
                       dataKey="timestamp" 
                       tickFormatter={formatTimestamp}
-                      tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }}
+                      tick={{ fontSize: 12, fill: 'rgba(255, 255, 255, 0.6)' }}
                     />
-                    <YAxis tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }} />
+                    <YAxis tick={{ fontSize: 12, fill: 'rgba(255, 255, 255, 0.6)' }} />
                     <Tooltip 
                       labelFormatter={formatTimestamp}
                       formatter={(value: number) => [`${value}%`, '']}
                       contentStyle={{
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        backgroundColor: 'rgba(15, 25, 35, 0.95)',
                         border: '1px solid rgba(255,255,255,0.2)',
-                        borderRadius: '8px',
-                        color: 'white'
+                        borderRadius: '12px',
+                        color: '#ffffff'
                       }}
                     />
                     <Legend />
                     <Line 
                       type="monotone" 
                       dataKey="cpu_usage" 
-                      stroke="#3B82F6" 
+                      stroke="#5F5CE5" 
                       strokeWidth={2}
                       name="CPU Usage (%)"
                     />
                     <Line 
                       type="monotone" 
                       dataKey="memory_usage" 
-                      stroke="#10B981" 
+                      stroke="#FFE816" 
                       strokeWidth={2}
                       name="Memory Usage (%)"
                     />
@@ -338,35 +343,35 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Power Consumption Chart */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-400" />
+              <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-6 shadow-lg">
+                <h3 className="text-lg font-bebas text-2e2e2e mb-4 flex items-center gap-2 uppercase tracking-wide">
+                  <Zap className="w-5 h-5 text-ffd9800" />
                   Power Consumption
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={historicalData.metrics}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(46, 46, 46, 0.2)" />
                     <XAxis 
                       dataKey="timestamp" 
                       tickFormatter={formatTimestamp}
-                      tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }}
+                      tick={{ fontSize: 12, fill: '#2e2e2e' }}
                     />
-                    <YAxis tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }} />
+                    <YAxis tick={{ fontSize: 12, fill: '#2e2e2e' }} />
                     <Tooltip 
                       labelFormatter={formatTimestamp}
                       formatter={(value: number) => [`${value.toFixed(1)}W`, 'Power']}
                       contentStyle={{
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        border: '1px solid rgba(255,255,255,0.2)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        border: '1px solid rgba(255,255,255,0.5)',
                         borderRadius: '8px',
-                        color: 'white'
+                        color: '#2e2e2e'
                       }}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="power_consumption" 
-                      stroke="#F59E0B" 
-                      fill="rgba(245, 158, 11, 0.3)"
+                      stroke="#FFE816" 
+                      fill="rgba(255, 232, 22, 0.2)"
                       strokeWidth={2}
                     />
                   </AreaChart>
@@ -374,42 +379,42 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Network Activity Chart */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-purple-400" />
+              <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-6 shadow-lg">
+                <h3 className="text-lg font-bebas text-2e2e2e mb-4 flex items-center gap-2 uppercase tracking-wide">
+                  <Activity className="w-5 h-5 text-f79cff" />
                   Network Activity
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={historicalData.metrics}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(46, 46, 46, 0.2)" />
                     <XAxis 
                       dataKey="timestamp" 
                       tickFormatter={formatTimestamp}
-                      tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }}
+                      tick={{ fontSize: 12, fill: '#2e2e2e' }}
                     />
-                    <YAxis tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }} />
+                    <YAxis tick={{ fontSize: 12, fill: '#2e2e2e' }} />
                     <Tooltip 
                       labelFormatter={formatTimestamp}
                       formatter={(value: number) => [formatBytes(value), '']}
                       contentStyle={{
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        border: '1px solid rgba(255,255,255,0.2)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        border: '1px solid rgba(255,255,255,0.5)',
                         borderRadius: '8px',
-                        color: 'white'
+                        color: '#2e2e2e'
                       }}
                     />
                     <Legend />
                     <Line 
                       type="monotone" 
                       dataKey="network_bytes_sent" 
-                      stroke="#8B5CF6" 
+                      stroke="#5F5CE5" 
                       strokeWidth={2}
                       name="Bytes Sent"
                     />
                     <Line 
                       type="monotone" 
                       dataKey="network_bytes_recv" 
-                      stroke="#EC4899" 
+                      stroke="#F79CFF" 
                       strokeWidth={2}
                       name="Bytes Received"
                     />
@@ -418,28 +423,28 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Disk I/O Chart */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <HardDrive className="w-5 h-5 text-green-400" />
+              <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-6 shadow-lg">
+                <h3 className="text-lg font-bebas text-2e2e2e mb-4 flex items-center gap-2 uppercase tracking-wide">
+                  <HardDrive className="w-5 h-5 text-fd9800" />
                   Disk I/O Activity
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={historicalData.metrics}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(46, 46, 46, 0.2)" />
                     <XAxis 
                       dataKey="timestamp" 
                       tickFormatter={formatTimestamp}
-                      tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }}
+                      tick={{ fontSize: 12, fill: '#2e2e2e' }}
                     />
-                    <YAxis tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.7)' }} />
+                    <YAxis tick={{ fontSize: 12, fill: '#2e2e2e' }} />
                     <Tooltip 
                       labelFormatter={formatTimestamp}
                       formatter={(value: number) => [formatBytes(value), '']}
                       contentStyle={{
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        border: '1px solid rgba(255,255,255,0.2)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        border: '1px solid rgba(255,255,255,0.5)',
                         borderRadius: '8px',
-                        color: 'white'
+                        color: '#2e2e2e'
                       }}
                     />
                     <Legend />
@@ -453,7 +458,7 @@ export const Dashboard: React.FC = () => {
                     <Line 
                       type="monotone" 
                       dataKey="disk_write_bytes" 
-                      stroke="#DC2626" 
+                      stroke="#EF4444" 
                       strokeWidth={2}
                       name="Write Bytes"
                     />
@@ -466,17 +471,17 @@ export const Dashboard: React.FC = () => {
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
-              <span className="ml-2 text-white/70">Loading historical data...</span>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-5f5ce5"></div>
+              <span className="ml-2 text-2e2e2e font-general-sans font-semibold">Loading historical data...</span>
             </div>
           )}
 
           {/* No Data State */}
           {!loading && historicalData && historicalData.metrics.length === 0 && (
-            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-12 text-center">
-              <TrendingUp className="w-12 h-12 text-white/40 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">No Historical Data Available</h3>
-              <p className="text-white/60">
+            <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-12 text-center">
+              <TrendingUp className="w-12 h-12 text-2e2e2e/40 mx-auto mb-4" />
+              <h3 className="text-lg font-bebas text-2e2e2e mb-2 uppercase tracking-wide">No Historical Data Available</h3>
+              <p className="text-2e2e2e/60 font-general-sans">
                 Historical metrics will appear here once data has been collected for the selected time range.
               </p>
             </div>

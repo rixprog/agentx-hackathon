@@ -95,156 +95,137 @@ export const MCPServerConfig: React.FC<MCPServerConfigProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-slate-800/90 via-purple-900/80 to-slate-800/90 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden border border-white/20">
-        <div className="flex items-center justify-between p-6 border-b border-white/20">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <Settings className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                MCP Servers
-              </h2>
-              <p className="text-sm text-white/60">Configure your AI model connections</p>
-            </div>
-          </div>
+    <div className="mcp-config">
+      <button
+        onClick={onClose}
+        className="close-config"
+        title="Close Config"
+      >
+        ✕
+      </button>
+
+      <h2 className="uppercase font-anton text-agentd-primary mb-6">
+        MCP Servers
+      </h2>
+      <p className="text-xs font-general-sans text-agentd-text mb-6">
+        Connect and configure your model context protocol servers
+      </p>
+      
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bebas text-agentd-secondary uppercase letter-spacing-1">
+            Connected
+          </h3>
           <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-xl transition-all duration-300"
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="px-3 py-2 font-anton text-xs border-2 border-agentd-secondary text-agentd-border bg-agentd-secondary hover:bg-agentd-accent1 transition-all"
           >
-            <X size={20} className="text-white/80 hover:text-white" />
+            + ADD
           </button>
         </div>
         
-        <div className="p-6 overflow-y-auto max-h-[70vh]">
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-cyan-400" />
-                <h3 className="font-semibold text-white">Connected Servers</h3>
-              </div>
-              <button
-                onClick={() => setShowAddForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white rounded-xl hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 text-sm font-medium"
-              >
-                <Plus size={16} />
-                Add Server
-              </button>
-            </div>
-            
-            {servers.length === 0 ? (
-              <div className="text-center py-12 text-white/50">
-                <Server className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                <p className="text-lg font-medium mb-2">No MCP servers configured</p>
-                <p className="text-sm opacity-70">Add your first server to get started</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {servers.map((server) => (
-                  <div
-                    key={server.id}
-                    className="flex items-center justify-between p-5 bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-white/30 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className={`
-                        w-12 h-12 rounded-xl flex items-center justify-center
-                        ${server.isActive 
-                          ? 'bg-gradient-to-br from-green-400 to-emerald-500' 
-                          : 'bg-gradient-to-br from-gray-500 to-gray-600'
-                        }
-                      `}>
-                        <Zap className="w-5 h-5 text-white" />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                          <h4 className="font-semibold text-white">{server.name}</h4>
-                          <span className={`
-                            px-3 py-1 text-xs rounded-full font-medium
-                            ${server.isActive 
-                              ? 'bg-gradient-to-r from-green-400/20 to-emerald-500/20 text-green-300 border border-green-400/30' 
-                              : 'bg-gradient-to-r from-gray-500/20 to-gray-600/20 text-gray-300 border border-gray-500/30'
-                            }
-                          `}>
-                            {server.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
-                        <p className="text-sm text-white/60">{server.url}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => onToggleServer(server.id)}
-                        className={`
-                          p-2 rounded-xl transition-all duration-300
-                          ${server.isActive 
-                            ? 'hover:bg-red-500/20 text-red-400 hover:text-red-300' 
-                            : 'hover:bg-green-500/20 text-green-400 hover:text-green-300'
-                          }
-                        `}
-                      >
-                        {server.isActive ? <X size={18} /> : <Check size={18} />}
-                      </button>
-                      <button
-                        onClick={() => onDeleteServer(server.id)}
-                        className="p-2 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl transition-all duration-300"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+        {servers.length === 0 ? (
+          <div className="text-center py-8 text-agentd-text opacity-60">
+            <p className="font-general-sans text-xs font-bold">NO SERVERS YET</p>
+            <p className="text-xs mt-1 opacity-70">ADD ONE TO GET STARTED</p>
           </div>
-          
-          {showAddForm && (
-            <div className="border-t border-white/20 pt-8">
-              <h3 className="font-semibold text-white mb-6 flex items-center gap-2">
-                <Plus className="w-5 h-5 text-cyan-400" />
-                Add New Server
-              </h3>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">
-                    Server Name
-                  </label>
-                  <input
-                    type="text"
-                    value={newServer.name}
-                    onChange={(e) => setNewServer({ ...newServer, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 text-white placeholder-white/50 transition-all duration-300"
-                    placeholder="e.g., GitHub Server"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">
-                    Server Configuration (JSON)
-                  </label>
-                  <textarea
-                    value={newServer.jsonConfig}
-                    onChange={(e) => setNewServer({ ...newServer, jsonConfig: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 text-white placeholder-white/50 transition-all duration-300"
-                    placeholder='{"type": "local", "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"], "env": {"GITHUB_PERSONAL_ACCESS_TOKEN": "your_token"}}'
-                    rows={5}
-                  />
+        ) : (
+          <div className="space-y-3">
+            {servers.map((server) => (
+              <div
+                key={server.id}
+                className="flex items-center justify-between p-3 bg-white border-2 border-agentd-border transition-all hover:shadow-md"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-general-sans font-bold text-sm text-agentd-text">
+                      {server.name}
+                    </h4>
+                    <span className={`
+                      px-2 py-0.5 text-xs font-anton border-2
+                      ${server.isActive 
+                        ? 'border-agentd-secondary bg-agentd-secondary text-agentd-border' 
+                        : 'border-agentd-text bg-transparent text-agentd-text'
+                      }
+                    `}>
+                      {server.isActive ? 'ON' : 'OFF'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-general-sans text-agentd-text opacity-70">
+                    {server.url || 'Local Connection'}
+                  </p>
                 </div>
                 
-                <div className="flex gap-3 pt-2">
+                <div className="flex items-center gap-2 ml-3">
                   <button
-                    onClick={handleAddServer}
-                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white rounded-xl hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
+                    onClick={() => onToggleServer(server.id)}
+                    className="p-2 border-2 border-agentd-border font-anton text-xs hover:bg-agentd-accent2 transition-all"
+                    title={server.isActive ? 'Disable' : 'Enable'}
                   >
-                    Add Server
+                    {server.isActive ? '✓' : '◯'}
+                  </button>
+                  <button
+                    onClick={() => onDeleteServer(server.id)}
+                    className="p-2 border-2 border-agentd-accent3 text-agentd-accent3 font-anton text-xs hover:bg-agentd-accent3 hover:text-white transition-all"
+                    title="Delete"
+                  >
+                    ✕
                   </button>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
+      
+      {showAddForm && (
+        <div className="border-t-2 border-agentd-border pt-6">
+          <h3 className="font-bebas text-agentd-accent1 uppercase letter-spacing-1 mb-4">
+            Add New Server
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-general-sans font-bold text-agentd-text mb-2">
+                SERVER NAME
+              </label>
+              <input
+                type="text"
+                value={newServer.name}
+                onChange={(e) => setNewServer({ ...newServer, name: e.target.value })}
+                className="w-full px-3 py-2 bg-white border-2 border-agentd-border text-agentd-text font-general-sans focus:outline-none focus:border-agentd-primary"
+                placeholder="e.g., GitHub Server"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-general-sans font-bold text-agentd-text mb-2">
+                JSON CONFIG
+              </label>
+              <textarea
+                value={newServer.jsonConfig}
+                onChange={(e) => setNewServer({ ...newServer, jsonConfig: e.target.value })}
+                className="w-full px-3 py-2 bg-white border-2 border-agentd-border text-agentd-text font-general-sans text-xs focus:outline-none focus:border-agentd-primary resize-none"
+                placeholder='{"type": "local", "command": "npx"}'
+                rows={5}
+              />
+            </div>
+            
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={handleAddServer}
+                className="flex-1 px-4 py-2 bg-agentd-accent1 border-2 border-agentd-border text-agentd-border font-anton text-sm hover:bg-agentd-secondary transition-all"
+              >
+                ADD SERVER
+              </button>
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="px-4 py-2 border-2 border-agentd-border text-agentd-border font-anton text-sm hover:bg-white transition-all"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -274,9 +274,9 @@ export const ChatInterface: React.FC = () => {
 
   if (loading || creatingSession) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-0f1923 via-1a2942 to-132847">
-        <div className="text-white text-lg font-anton border border-white/30 px-8 py-6 bg-white/10 backdrop-blur-xl rounded-2xl">
-          ⏳ LOADING AGENTD...
+      <div className="flex h-screen items-center justify-center bg-black">
+        <div className="text-white text-lg font-black border-4 border-yellow-300 px-8 py-6">
+          ⏳ LOADING CHAT SESSIONS...
         </div>
       </div>
     );
@@ -284,17 +284,17 @@ export const ChatInterface: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-0f1923 via-1a2942 to-132847">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/30 text-white p-6 font-anton text-center rounded-2xl">
-          <div className="font-anton mb-2 text-xl">⚠️ ERROR</div>
-          <div className="font-general-sans font-semibold">{error}</div>
+      <div className="flex h-screen items-center justify-center bg-black">
+        <div className="bg-black border-4 border-red-500 text-red-300 p-6 font-bold">
+          <div className="font-black mb-2 text-xl">⚠️ ERROR</div>
+          <div>{error}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="chat-container">
+    <div className="flex h-screen bg-black">
       {showSidebar && (
         <ChatHistory
           sessions={sessions}
@@ -304,38 +304,39 @@ export const ChatInterface: React.FC = () => {
           onNewChat={createNewSession}
         />
       )}
-      <div className="chat-main">
-        <div className="chat-header">
+      <div className="flex-1 flex flex-col bg-black border-l-4 border-cyan-400">
+        <div className="bg-black border-b-4 border-yellow-300 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowSidebar(!showSidebar)}
-              className="p-2 rounded-lg font-anton text-lg lg:hidden hover:bg-white/20 transition-all"
-              title="Toggle Sidebar"
+              className="p-3 border-3 border-cyan-400 text-cyan-400 lg:hidden font-black hover:bg-cyan-400 hover:text-black transition-none"
             >
-              {showSidebar ? <X size={24} /> : <Menu size={24} />}
+              {showSidebar ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <div className="flex items-center gap-2">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-lg border border-white/30 rounded-lg flex items-center justify-center font-anton text-agentd-primary text-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-black border-4 border-yellow-300 flex items-center justify-center font-black text-yellow-300">
                 A
               </div>
               <div>
-                <h1 className="m-0 text-agentd-primary">AGENTD</h1>
-                <p className="text-xs text-agentd-text/70 font-general-sans font-semibold m-0">
-                  {activeSession ? activeSession.title : 'Select a chat'}
+                <h1 className="text-2xl font-black text-white tracking-wider">
+                  AGENTD CHAT
+                </h1>
+                <p className="text-xs text-gray-300 font-bold">
+                  {activeSession ? activeSession.title : 'Select or start a new chat'}
                 </p>
               </div>
             </div>
           </div>
           <button
             onClick={() => setShowMcpConfig(true)}
-            className="p-2 rounded-lg font-anton hover:bg-white/20 transition-all text-agentd-primary"
+            className="p-3 border-3 border-cyan-400 text-cyan-400 font-black hover:bg-cyan-400 hover:text-black transition-none"
             title="Configure MCP Servers"
           >
-            <Settings size={24} />
+            <Settings size={20} />
           </button>
         </div>
 
-        <div className="chat-messages">
+        <div className="flex-1 overflow-y-auto p-8 bg-black space-y-6">
           {activeSession ? (
             <>
               {activeSession.messages.map((message) => (
@@ -356,14 +357,14 @@ export const ChatInterface: React.FC = () => {
             </>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center border border-white/30 backdrop-blur-lg bg-white/10 p-12 rounded-2xl">
-                <h1 className="text-agentd-primary mb-4">AGENTD CHAT</h1>
-                <p className="text-agentd-text font-general-sans font-semibold mb-8 text-lg">
-                  Start a conversation to explore possibilities
-                </p>
+              <div className="text-center border-4 border-yellow-300 p-12 bg-black">
+                <h2 className="text-4xl font-black text-yellow-300 mb-4">
+                  WELCOME TO AGENTD
+                </h2>
+                <p className="text-white font-bold mb-8 text-lg">Start a conversation to explore infinite possibilities</p>
                 <button
                   onClick={createNewSession}
-                  className="px-8 py-4 font-anton text-lg"
+                  className="px-8 py-4 bg-black border-4 border-yellow-300 text-yellow-300 font-black hover:bg-yellow-300 hover:text-black transition-none text-lg"
                 >
                   START NEW CHAT
                 </button>
@@ -373,24 +374,35 @@ export const ChatInterface: React.FC = () => {
         </div>
 
         {activeSession && (
-          <div className="chat-input-area">
-            <textarea
-              ref={inputRef}
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="ASK AGENTD..."
-              className="chat-input"
-              rows={2}
-              style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={!inputMessage.trim() || isTyping}
-              className="send-button"
-            >
-              <Send size={24} />
-            </button>
+          <div className="border-t-4 border-cyan-400 bg-black p-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="relative">
+                <textarea
+                  ref={inputRef}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="ASK AGENTD ANYTHING..."
+                  className="w-full resize-none bg-black border-4 border-cyan-400 text-white font-bold text-lg placeholder-gray-500 px-6 py-4 pr-16 min-h-[60px] max-h-32 focus:border-yellow-300 focus:outline-none transition-none"
+                  rows={1}
+                  style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+                />
+                <button
+                  onClick={sendMessage}
+                  disabled={!inputMessage.trim() || isTyping}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-3 bg-black border-4 border-yellow-300 text-yellow-300 font-black hover:bg-yellow-300 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-none"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between mt-4 text-sm text-gray-400 font-bold">
+                <span>PRESS ENTER TO SEND, SHIFT+ENTER FOR NEW LINE</span>
+                <span className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-yellow-300"></div>
+                  {mcpServers.filter(s => s.isActive).length} MCP SERVER(S) CONNECTED
+                </span>
+              </div>
+            </div>
           </div>
         )}
       </div>
