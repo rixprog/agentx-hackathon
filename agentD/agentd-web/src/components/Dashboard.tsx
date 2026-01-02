@@ -110,7 +110,7 @@ const CircularProgress: React.FC<CircularProgressProps> = ({
           )}
         </div>
         {/* Icon overlay */}
-        <div className="absolute -top-2 -right-2 bg-gradient-to-br from-5f5ce5 via-c3ff16 to-ff8500 rounded-full p-2 shadow-xl">
+        <div className="absolute -top-2 -right-2 bg-gradient-to-br from-indigo-500 via-purple-500 to-orange-500 rounded-full p-2 shadow-xl">
           {icon}
         </div>
       </div>
@@ -193,8 +193,8 @@ export const Dashboard: React.FC = () => {
   if (error) {
     return (
       <div className="flex h-screen bg-gradient-to-br from-0f1923 via-1a2942 to-132847 items-center justify-center">
-        <div className="bg-white/15 backdrop-blur-lg border border-white/30 rounded-2xl p-6">
-          <p className="text-red-400 font-general-sans font-semibold">{error}</p>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+          <p className="text-red-300 font-medium">{error}</p>
         </div>
       </div>
     );
@@ -203,8 +203,8 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-0f1923 via-1a2942 to-132847 relative overflow-hidden">
       {/* Animated gradient blobs */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-5f5ce5/20 to-f79cff/15 rounded-full filter blur-3xl animate-pulse pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-f79cff/15 to-c3ff16/10 rounded-full filter blur-3xl animate-pulse pointer-events-none" style={{animationDelay: '1s'}}></div>
+      <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-indigo-500/10 to-pink-500/8 rounded-full filter blur-3xl animate-pulse pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-pink-500/8 to-cyan-500/6 rounded-full filter blur-3xl animate-pulse pointer-events-none" style={{animationDelay: '1s'}}></div>
       
       {/* Main Dashboard Area */}
       <div className="flex-1 flex flex-col relative z-10">
@@ -212,15 +212,15 @@ export const Dashboard: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-6">
           {/* Time Range Selector */}
           <div className="mb-8">
-            <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl p-4">
-              <Clock className="w-5 h-5 text-c3ff16" />
-              <span className="text-sm font-bebas text-white uppercase tracking-wide">Time Range:</span>
+            <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-lg p-4">
+              <Clock className="w-5 h-5 text-white" />
+              <span className="text-sm font-medium text-white tracking-wide">Time Range:</span>
               <div className="flex space-x-2">
                 {timeRangeOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => setSelectedTimeRange(option.value)}
-                    className={`px-4 py-2 text-xs font-bebas rounded-xl transition-all duration-300 uppercase tracking-wider ${
+                    className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
                       selectedTimeRange === option.value
                         ? 'bg-white/20 backdrop-blur-xl border border-white/30 text-white shadow-lg'
                         : 'bg-white/8 backdrop-blur-xl text-white/70 hover:bg-white/12 border border-white/15'
@@ -237,7 +237,7 @@ export const Dashboard: React.FC = () => {
           {currentMetrics && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {/* CPU Usage */}
-              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 shadow-lg hover:shadow-xl hover:bg-white/12 transition-all">
+              <div className="bg-white/8 backdrop-blur-2xl border border-white/15 rounded-lg p-6 shadow-lg hover:shadow-xl hover:bg-white/12 transition-all">
                 <CircularProgress
                   value={currentMetrics.cpu_usage}
                   max={100}

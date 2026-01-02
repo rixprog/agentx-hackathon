@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Message } from '../types/chat';
-import { Loader2, Terminal } from 'lucide-react';
+import { Loader2, Terminal, User, Sparkles } from 'lucide-react';
 
 interface MessageBubbleProps {
   message: Message;
@@ -87,24 +87,28 @@ ${body}
 
   return (
     <div className={`message-bubble ${isUser ? 'user' : 'agent'}`}>
-      {/* Avatar */}
+      {/* Avatar with Icon */}
       <div className={`message-avatar ${isUser ? 'user' : 'agent'}`}>
-        {isUser ? 'YOU' : 'A'}
+        {isUser ? (
+          <User size={22} strokeWidth={2.5} />
+        ) : (
+          <Sparkles size={22} strokeWidth={2.5} />
+        )}
       </div>
       
       {/* Message Bubble */}
       <div className={`message-content ${isUser ? 'user' : 'agent'}`}>
         {message.isTyping ? (
-          <div className="flex items-center gap-2 font-atom text-sm">
+          <div className="flex items-center gap-2 text-sm font-medium">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span className="uppercase font-bold text-agentd-primary">THINKING...</span>
+            <span>Thinking...</span>
           </div>
         ) : (
           <div className="space-y-2">
             {isExecuting && (
-              <div className="flex items-center gap-2 text-xs font-general-sans font-bold opacity-70 border-b border-current pb-2">
+              <div className="flex items-center gap-2 text-xs font-medium opacity-70 border-b border-current pb-2">
                 <Terminal className="w-4 h-4" />
-                <span>EXECUTING COMMAND...</span>
+                <span>Executing command...</span>
               </div>
             )}
             <div 

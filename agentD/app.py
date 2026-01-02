@@ -270,6 +270,59 @@ async def add_chat_message(payload: Dict[str, Any]):
     conn.close()
     return JSONResponse(content={"status": "success"})
 
+@app.get("/api/zapier_mcp")
+async def get_zapier_mcp():
+    """Get current Zapier MCP URL from browser_mcp.json."""
+    try:
+        browser_mcp_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "browser_mcp.json")
+        if os.path.exists(browser_mcp_path):
+            with open(browser_mcp_path, 'r') as f:
+                config = json.load(f)
+                zapier_url = config.get("mcpServers", {}).get("zapier", {}).get("url", "")
+                return JSONResponse(content={"url": zapier_url})
+        return JSONResponse(content={"url": ""})
+    except Exception as e:
+        print(f"Error reading Zapier MCP config: {e}")
+        raise HTTPException(status_code=500, detail=f"Error reading Zapier MCP config: {str(e)}")
+
+@app.post("/api/zapier_mcp")
+async def update_zapier_mcp(payload: Dict[str, Any]):
+    """Update Zapier MCP URL in browser_mcp.json."""
+    try:
+        zapier_url = payload.get("url", "")
+        if not zapier_url:
+            raise HTTPException(status_code=400, detail="URL is required")
+        
+        # Validate URL format
+        if not zapier_url.startswith("https://actions.zapier.com/mcp/") or not zapier_url.endswith("/sse"):
+            raise HTTPException(status_code=400, detail="Invalid Zapier MCP URL format. Expected: https://actions.zapier.com/mcp/{key}/sse")
+        
+        browser_mcp_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "browser_mcp.json")
+        
+        # Read existing config or create new one
+        if os.path.exists(browser_mcp_path):
+            with open(browser_mcp_path, 'r') as f:
+                config = json.load(f)
+        else:
+            config = {"mcpServers": {}}
+        
+        # Update Zapier configuration
+        if "mcpServers" not in config:
+            config["mcpServers"] = {}
+        
+        config["mcpServers"]["zapier"] = {"url": zapier_url}
+        
+        # Write updated config
+        with open(browser_mcp_path, 'w') as f:
+            json.dump(config, f, indent=2)
+        
+        return JSONResponse(content={"status": "success", "message": "Zapier MCP URL updated successfully", "url": zapier_url})
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error updating Zapier MCP config: {e}")
+        raise HTTPException(status_code=500, detail=f"Error updating Zapier MCP config: {str(e)}")
+
 # Catch-all route for frontend - This must come LAST
 @app.get("/{full_path:path}", response_class=HTMLResponse)
 async def serve_frontend(request: Request, full_path: str):

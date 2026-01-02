@@ -4,43 +4,41 @@ import { ChatInterface } from './components/ChatInterface';
 import { ChatHistory } from './components/ChatHistory';
 import { MCPServerConfig } from './components/MCPServerConfig';
 import { Dashboard } from './components/Dashboard';
-import { BarChart3, MessageSquare, Settings } from 'lucide-react';
+import { BarChart3, MessageSquare, Sparkles } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const location = useLocation();
-  
+
   const navItems = [
     { path: '/', icon: <BarChart3 className="w-6 h-6" />, label: 'DASHBOARD' },
     { path: '/chat', icon: <MessageSquare className="w-6 h-6" />, label: 'CHAT' },
-    { path: '/settings', icon: <Settings className="w-6 h-6" />, label: 'SETTINGS' },
   ];
 
   return (
     <nav className="fixed left-0 top-0 h-screen w-80 z-50 bg-white/8 backdrop-blur-3xl border-r border-white/15 p-6 shadow-2xl flex flex-col">
       {/* Logo Section */}
       <div className="flex items-center gap-4 mb-12">
-        <div className="w-14 h-14 bg-gradient-to-br from-5f5ce5 to-f79cff backdrop-blur-xl border border-white/30 rounded-xl flex items-center justify-center font-anton text-white text-2xl shadow-xl flex-shrink-0">
-          A
+        <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-teal-400 to-lime-400 backdrop-blur-xl border border-white/30 rounded-xl flex items-center justify-center font-anton text-white text-2xl shadow-xl flex-shrink-0">
+          <Sparkles className="w-8 h-8 animate-slow-spin" />
         </div>
         <div>
-          <h1 className="text-2xl font-anton text-white tracking-tight">
+          <h1 className="text-2xl text-white tracking-tight" style={{ fontFamily: "'Pixelify Sans', sans-serif", fontWeight: 600 }}>
             AGENTD
           </h1>
           <p className="text-xs text-white/60 font-general-sans tracking-wide">System Assistant</p>
         </div>
       </div>
-      
+
       {/* Navigation Items */}
       <div className="flex flex-col space-y-3 flex-1">
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
-            className={`flex items-center space-x-3 px-5 py-3 rounded-xl font-bebas text-sm tracking-wider transition-all duration-300 ${
-              location.pathname === item.path
-                ? 'bg-white/15 backdrop-blur-xl border border-white/30 text-white shadow-xl'
-                : 'bg-white/8 backdrop-blur-xl border border-white/15 text-white/80 hover:bg-white/12 hover:border-white/25 hover:text-white'
-            }`}
+            className={`flex items-center space-x-3 px-5 py-3 rounded-xl font-bebas text-sm tracking-wider transition-all duration-300 ${location.pathname === item.path
+              ? 'bg-white/15 backdrop-blur-xl border border-white/30 text-white shadow-xl'
+              : 'bg-white/8 backdrop-blur-xl border border-white/15 text-white/80 hover:bg-white/12 hover:border-white/25 hover:text-white'
+              }`}
           >
             {item.icon}
             <span>{item.label}</span>

@@ -3,7 +3,7 @@ import { MessageBubble } from './MessageBubble';
 import { ChatHistory } from './ChatHistory';
 import { MCPServerConfig } from './MCPServerConfig';
 import { Message, ChatSession, MCPServer } from '../types/chat';
-import { Send, Settings, Menu, X } from 'lucide-react';
+import { Send, Settings, Menu, X, Sparkles } from 'lucide-react';
 
 function parseDate(date: string | Date): Date {
   return date instanceof Date ? date : new Date(date);
@@ -17,7 +17,7 @@ export const ChatInterface: React.FC = () => {
   const [showMcpConfig, setShowMcpConfig] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
-  const [progress, setProgress] = useState<{step: number, total: number, message: string} | null>(null);
+  const [progress, setProgress] = useState<{ step: number, total: number, message: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creatingSession, setCreatingSession] = useState(false);
@@ -68,12 +68,14 @@ export const ChatInterface: React.FC = () => {
       .then(data => {
         setSessions(prev => prev.map(s =>
           s.id === activeSessionId
-            ? { ...s, messages: (data.messages || []).map((m: any) => ({
+            ? {
+              ...s, messages: (data.messages || []).map((m: any) => ({
                 id: m.id.toString(),
                 content: m.content,
                 role: m.role,
                 timestamp: parseDate(m.timestamp),
-              })) }
+              }))
+            }
             : s
         ));
       });
@@ -315,8 +317,8 @@ export const ChatInterface: React.FC = () => {
   if (loading || creatingSession) {
     return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-0f1923 via-1a2942 to-132847">
-        <div className="text-white text-lg font-anton border border-white/30 px-8 py-6 bg-white/10 backdrop-blur-xl rounded-2xl">
-          ⏳ LOADING AGENTD...
+        <div className="text-white text-lg font-medium border border-white/20 px-8 py-6 bg-white/10 backdrop-blur-xl rounded-lg">
+          Loading AgentD...
         </div>
       </div>
     );
@@ -325,9 +327,9 @@ export const ChatInterface: React.FC = () => {
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-0f1923 via-1a2942 to-132847">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/30 text-white p-6 font-anton text-center rounded-2xl">
-          <div className="font-anton mb-2 text-xl">⚠️ ERROR</div>
-          <div className="font-general-sans font-semibold">{error}</div>
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 text-white p-6 font-medium text-center rounded-lg">
+          <div className="mb-2 text-lg font-semibold">Error Loading AgentD</div>
+          <div className="text-sm text-white/70">{error}</div>
         </div>
       </div>
     );
@@ -349,18 +351,18 @@ export const ChatInterface: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowSidebar(!showSidebar)}
-              className="p-2 rounded-lg font-anton text-lg lg:hidden hover:bg-white/20 transition-all"
+              className="p-2 rounded-lg text-base lg:hidden hover:bg-white/20 transition-all"
               title="Toggle Sidebar"
             >
               {showSidebar ? <X size={24} /> : <Menu size={24} />}
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-lg border border-white/30 rounded-lg flex items-center justify-center font-anton text-agentd-primary text-xl">
-                A
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 via-teal-400 to-lime-400 backdrop-blur-lg border border-white/20 rounded-lg flex items-center justify-center font-medium text-white text-sm">
+                <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="m-0 text-agentd-primary">AGENTD</h1>
-                <p className="text-xs text-agentd-text/70 font-general-sans font-semibold m-0">
+                <h1 className="m-0 text-white text-base font-bold" style={{ fontFamily: "'Pixelify Sans', sans-serif" }}>Chat</h1>
+                <p className="text-xs text-white/60 font-medium m-0">
                   {activeSession ? activeSession.title : 'Select a chat'}
                 </p>
               </div>
@@ -368,7 +370,7 @@ export const ChatInterface: React.FC = () => {
           </div>
           <button
             onClick={() => setShowMcpConfig(true)}
-            className="p-2 rounded-lg font-anton hover:bg-white/20 transition-all text-agentd-primary"
+            className="p-2 rounded-lg hover:bg-white/20 transition-all text-white"
             title="Configure MCP Servers"
           >
             <Settings size={24} />
@@ -383,20 +385,37 @@ export const ChatInterface: React.FC = () => {
               ))}
               {progress && (
                 <div className="message-bubble agent">
-                  <div className="message-avatar agent">A</div>
+                  <div className="message-avatar agent">
+                    <Sparkles className="w-5 h-5 animate-pulse" />
+                  </div>
                   <div className="message-content agent">
-                    <div className="flex flex-col gap-2">
-                      <div className="text-sm text-agentd-text/70">
-                        {progress.message}
+                    <div className="flex flex-col gap-3">
+                      {/* Action indicator with icon */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></div>
+                        <div className="text-sm font-semibold text-white">
+                          {progress.message}
+                        </div>
                       </div>
-                      <div className="w-full bg-white/20 rounded-full h-2">
+
+                      {/* Enhanced progress bar with gradient */}
+                      <div className="w-full bg-white/10 rounded-full h-2.5 overflow-hidden shadow-inner">
                         <div
-                          className="bg-agentd-primary h-2 rounded-full transition-all duration-300"
+                          className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-violet-500 h-2.5 rounded-full transition-all duration-500 ease-out relative overflow-hidden"
                           style={{ width: `${(progress.step / progress.total) * 100}%` }}
-                        ></div>
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent shimmer-animation"></div>
+                        </div>
                       </div>
-                      <div className="text-xs text-agentd-text/50">
-                        Step {progress.step} of {progress.total}
+
+                      {/* Step counter with percentage */}
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-white/60 font-medium">
+                          Step {progress.step} of {progress.total}
+                        </span>
+                        <span className="text-violet-300 font-semibold">
+                          {Math.round((progress.step / progress.total) * 100)}%
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -417,16 +436,16 @@ export const ChatInterface: React.FC = () => {
             </>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center border border-white/30 backdrop-blur-lg bg-white/10 p-12 rounded-2xl">
-                <h1 className="text-agentd-primary mb-4">AGENTD CHAT</h1>
-                <p className="text-agentd-text font-general-sans font-semibold mb-8 text-lg">
-                  Start a conversation to explore possibilities
+              <div className="text-center border border-white/20 backdrop-blur-lg bg-white/10 p-12 rounded-lg">
+                <h1 className="text-white mb-4 text-2xl font-bold">Start a Conversation</h1>
+                <p className="text-white/70 font-medium mb-8 text-base">
+                  Create a new chat to explore possibilities
                 </p>
                 <button
-                  onClick={createNewSession}
-                  className="px-8 py-4 font-anton text-lg"
+                  onClick={() => createNewSession()}
+                  className="px-8 py-4 font-medium text-base"
                 >
-                  START NEW CHAT
+                  New Chat
                 </button>
               </div>
             </div>
@@ -440,7 +459,7 @@ export const ChatInterface: React.FC = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="ASK AGENTD..."
+              placeholder="Type your message..."
               className="chat-input"
               rows={2}
               style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
