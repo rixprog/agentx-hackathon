@@ -38,7 +38,7 @@ export const ChatInterface: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch('/api/chat_sessions')
+    fetch('/api/chat_sessions?type=chat')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load sessions');
         return res.json();
@@ -133,7 +133,7 @@ export const ChatInterface: React.FC = () => {
     let currentSessionId = activeSessionId;
     if (!currentSessionId) {
       await createNewSession(inputMessage);
-      const res = await fetch('/api/chat_sessions');
+      const res = await fetch('/api/chat_sessions?type=chat');
       const data = await res.json();
       const loadedSessions: ChatSession[] = (data.sessions || []).map((s: any) => ({
         id: s.id,
@@ -170,7 +170,7 @@ export const ChatInterface: React.FC = () => {
 
     const currentSession = sessions.find(s => s.id === currentSessionId);
     if (currentSession && (currentSession.title === 'Untitled Chat' || currentSession.title === 'New Chat')) {
-      fetch('/api/chat_sessions')
+      fetch('/api/chat_sessions?type=chat')
         .then(res => res.json())
         .then(data => {
           const loadedSessions: ChatSession[] = (data.sessions || []).map((s: any) => ({

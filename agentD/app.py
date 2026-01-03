@@ -124,12 +124,20 @@ async def chat_endpoint(payload: Dict[str, Any]):
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @app.get("/api/chat_sessions")
-async def list_sessions():
+async def list_sessions(type: str = None):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, title, created_at, updated_at FROM chat_sessions ORDER BY updated_at DESC")
-    sessions = [{"id": r[0], "title": r[1], "created_at": r[2], "updated_at": r[3]} for r in cursor.fetchall()]
+    all_sessions = [{"id": r[0], "title": r[1], "created_at": r[2], "updated_at": r[3]} for r in cursor.fetchall()]
     conn.close()
+
+    if type == "chat":
+        sessions = [s for s in all_sessions if not s["title"].startswith("Agent Task:")]
+    elif type == "agent":
+        sessions = [s for s in all_sessions if s["title"].startswith("Agent Task:")]
+    else:
+        sessions = all_sessions
+
     return JSONResponse(content={"sessions": sessions})
 
 @app.get("/api/chat_sessions/{session_id}")
@@ -255,13 +263,44 @@ async def create_agent_task(payload: Dict[str, Any]):
         raise HTTPException(status_code=400, detail="Name and task are required")
     
     task_id = f"task_{int(datetime.utcnow().timestamp() * 1000)}"
+    now = datetime.utcnow().isoformat()
+    description = payload.get("description", "")
+    
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO agent_tasks (id, name, description, task) VALUES (?, ?, ?, ?)", 
-                   (task_id, name, payload.get("description"), task))
+    cursor.execute("INSERT INTO agent_tasks (id, name, description, task, created_at) VALUES (?, ?, ?, ?, ?)", 
+                   (task_id, name, description, task, now))
     conn.commit()
     conn.close()
-    return {"id": task_id, "status": "created"}
+    
+    return {
+        "id": task_id,
+        "name": name,
+        "description": description,
+        "task": task,
+        "created_at": now,
+        "last_result": None,
+        "status": "idle"
+    }
+
+@app.put("/api/agent_tasks/{task_id}")
+async def update_agent_task(task_id: str, payload: Dict[str, Any]):
+    name, task = payload.get("name"), payload.get("task")
+    if not name or not task:
+        raise HTTPException(status_code=400, detail="Name and task are required")
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE agent_tasks SET name = ?, description = ?, task = ? WHERE id = ?", 
+                   (name, payload.get("description"), task, task_id))
+    
+    if cursor.rowcount == 0:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Task not found")
+        
+    conn.commit()
+    conn.close()
+    return {"id": task_id, "status": "updated"}
 
 @app.delete("/api/agent_tasks/{task_id}")
 async def delete_agent_task(task_id: str):
