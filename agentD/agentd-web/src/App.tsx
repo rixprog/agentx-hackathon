@@ -2,15 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 
 import { ChatInterface } from './components/ChatInterface';
-import { ChatHistory } from './components/ChatHistory';
-import { MCPServerConfig } from './components/MCPServerConfig';
+
 import { Dashboard } from './components/Dashboard';
 import { AgentBuilder } from './components/AgentBuilder';
 
 import {
   BarChart3,
   MessageSquare,
-  Settings,
   Bot,
   Sparkles
 } from 'lucide-react';
@@ -22,12 +20,11 @@ const Navigation: React.FC = () => {
     { path: '/', icon: <BarChart3 className="w-6 h-6" />, label: 'DASHBOARD' },
     { path: '/chat', icon: <MessageSquare className="w-6 h-6" />, label: 'CHAT' },
     { path: '/agent-builder', icon: <Bot className="w-6 h-6" />, label: 'AGENT BUILDER' },
-    { path: '/settings', icon: <Settings className="w-6 h-6" />, label: 'SETTINGS' },
   ];
 
   return (
     <nav className="fixed left-0 top-0 h-screen w-80 z-50 bg-white/8 backdrop-blur-3xl border-r border-white/15 p-6 shadow-2xl flex flex-col">
-      
+
       {/* Logo Section */}
       <div className="flex items-center gap-4 mb-12">
         <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-teal-400 to-lime-400 backdrop-blur-xl border border-white/30 rounded-xl flex items-center justify-center text-white shadow-xl flex-shrink-0">
@@ -54,10 +51,9 @@ const Navigation: React.FC = () => {
             key={item.path}
             to={item.path}
             className={`flex items-center space-x-3 px-5 py-3 rounded-xl text-sm tracking-wider transition-all duration-300
-              ${
-                location.pathname === item.path
-                  ? 'bg-white/15 backdrop-blur-xl border border-white/30 text-white shadow-xl'
-                  : 'bg-white/8 backdrop-blur-xl border border-white/15 text-white/80 hover:bg-white/12 hover:border-white/25 hover:text-white'
+              ${location.pathname === item.path
+                ? 'bg-white/15 backdrop-blur-xl border border-white/30 text-white shadow-xl'
+                : 'bg-white/8 backdrop-blur-xl border border-white/15 text-white/80 hover:bg-white/12 hover:border-white/25 hover:text-white'
               }
             `}
           >
@@ -80,7 +76,6 @@ const App: React.FC = () => {
             <Route path="/" element={<Dashboard />} />
             <Route path="/chat" element={<ChatInterface />} />
             <Route path="/agent-builder" element={<AgentBuilder />} />
-            <Route path="/settings" element={<MCPServerConfig />} />
           </Routes>
         </main>
       </div>
