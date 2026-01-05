@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "zapier": {
+      "url": "https://actions.zapier.com/mcp/sk-ak-Guian47Gev8BS4eluOvxW4sDFj/sse"
+    },
+    "github": {
+      "type": "local",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    }
+  }
+}
