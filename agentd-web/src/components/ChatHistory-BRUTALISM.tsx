@@ -95,7 +95,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
       <div className="p-4 border-t-4 border-yellow-300 bg-black">
         <div className="text-xs text-gray-400 text-center font-black tracking-wide">
           <div className="mb-2">━━━━━━━━━━━━</div>
-          <span>POWERED BY AGENTD</span>
+          <span>POWERED BY AXIOM</span>
         </div>
       </div>
     </div>

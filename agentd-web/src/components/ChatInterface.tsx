@@ -318,7 +318,7 @@ export const ChatInterface: React.FC = () => {
     return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-0f1923 via-1a2942 to-132847">
         <div className="text-white text-lg font-medium border border-white/20 px-8 py-6 bg-white/10 backdrop-blur-xl rounded-lg">
-          Loading AgentD...
+          Loading Axiom...
         </div>
       </div>
     );
@@ -328,7 +328,7 @@ export const ChatInterface: React.FC = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-0f1923 via-1a2942 to-132847">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 text-white p-6 font-medium text-center rounded-lg">
-          <div className="mb-2 text-lg font-semibold">Error Loading AgentD</div>
+          <div className="mb-2 text-lg font-semibold">Error Loading Axiom</div>
           <div className="text-sm text-white/70">{error}</div>
         </div>
       </div>
@@ -393,7 +393,7 @@ export const ChatInterface: React.FC = () => {
                       {/* Action indicator with icon */}
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></div>
-                        <div className="text-sm font-semibold text-white">
+                        <div className="text-sm font-semibold text-white" style={{ color: '#FFFFFF' }}>
                           {progress.message}
                         </div>
                       </div>
@@ -410,10 +410,10 @@ export const ChatInterface: React.FC = () => {
 
                       {/* Step counter with percentage */}
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-white/60 font-medium">
+                        <span className="text-white font-medium" style={{ color: '#FFFFFF' }}>
                           Step {progress.step} of {progress.total}
                         </span>
-                        <span className="text-violet-300 font-semibold">
+                        <span className="text-white font-semibold" style={{ color: '#FFFFFF' }}>
                           {Math.round((progress.step / progress.total) * 100)}%
                         </span>
                       </div>

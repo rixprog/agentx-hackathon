@@ -7,8 +7,8 @@ router = APIRouter()
 
 def get_config_path() -> Path:
     """Get the path to the MCP configuration file."""
-    # Go up two levels from the current file to reach the root directory
-    root_dir = Path(__file__).parent.parent.parent
+    # Go up one level from the current file to reach the root directory (OS_AGENT)
+    root_dir = Path(__file__).parent.parent
     config_path = root_dir / "browser_mcp.json"
     print(f"DEBUG: MCP config path: {config_path.absolute()}")
     return config_path

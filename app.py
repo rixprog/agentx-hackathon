@@ -225,7 +225,7 @@ async def summarize_chat(request: Dict[str, Any]):
 # 3. Zapier MCP Configuration
 @app.get("/api/zapier_mcp")
 async def get_zapier_mcp():
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "browser_mcp.json")
+    path = os.path.join(os.path.dirname(__file__), "browser_mcp.json")
     if os.path.exists(path):
         with open(path, 'r') as f:
             config = json.load(f)
@@ -238,7 +238,7 @@ async def update_zapier_mcp(payload: Dict[str, Any]):
     if not url.startswith("https://actions.zapier.com/mcp/"):
         raise HTTPException(status_code=400, detail="Invalid Zapier URL format")
     
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "browser_mcp.json")
+    path = os.path.join(os.path.dirname(__file__), "browser_mcp.json")
     config = json.load(open(path)) if os.path.exists(path) else {"mcpServers": {}}
     config["mcpServers"]["zapier"] = {"url": url}
     

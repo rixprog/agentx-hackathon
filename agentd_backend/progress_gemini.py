@@ -6,10 +6,10 @@ load_dotenv()
 
 client = genai.Client()
 
-def generate_progress_steps(prompt, max_steps=6, mcp_active=False):
+def generate_progress_steps(prompt, max_steps=4, mcp_active=False):
     if mcp_active:
         # For MCP operations, use more steps as they involve external services
-        max_steps = 8
+        max_steps = 4
         system_prompt = f"""
 You are generating UI progress updates for an AI agent integrating with external services (MCP servers).
 

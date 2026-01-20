@@ -47,10 +47,49 @@ _initialized_mcp_tools: List[BaseTool] = []
 #             json.dump(default_config, f, indent=2)
 #     return config_path
 
-async def initialize_and_get_mcp_tools() -> List[BaseTool]:
+def is_zapier_related_query(query: str) -> bool:
+    """
+    Detects if a query is related to Zapier functionality.
+    Checks for keywords related to email, LinkedIn, social media, automation, etc.
+    """
+    query_lower = query.lower()
+    
+    # Keywords that indicate Zapier-related tasks
+    zapier_keywords = [
+        'email', 'mail', 'send email', 'send mail', 'compose email',
+        'linkedin', 'linkedin post', 'create post', 'social media',
+        'slack', 'message', 'send message', 'notification',
+        'calendar', 'event', 'meeting', 'schedule',
+        'crm', 'contact', 'lead', 'customer',
+        'automation', 'workflow', 'zap', 'trigger',
+        'webhook', 'api', 'integration', 'connect',
+        'gmail', 'outlook', 'mailchimp', 'hubspot',
+        'salesforce', 'trello', 'asana', 'jira',
+        'twitter', 'facebook', 'instagram', 'post',
+        'tweet', 'share', 'publish'
+    ]
+    
+    return any(keyword in query_lower for keyword in zapier_keywords)
+
+async def reset_zapier_tools():
+    """
+    Resets the Zapier MCP tools cache to force re-initialization.
+    """
+    global _mcp_client, _mcp_adapter, _initialized_mcp_tools
+    
+    print("Resetting Zapier MCP tools cache...")
+    _mcp_client = None
+    _mcp_adapter = None
+    _initialized_mcp_tools = []
+    print("Zapier MCP tools cache reset. Tools will be re-initialized on next call.")
+
+async def initialize_and_get_mcp_tools(force_reinit: bool = False) -> List[BaseTool]:
     """
     Initializes the MCPClient and LangChainAdapter to create and return
-    the raw list of Zapier tools directly. This function should be called once.
+    the raw list of Zapier tools directly.
+    
+    Args:
+        force_reinit: If True, forces re-initialization even if tools are already cached.
     """
     global _mcp_client, _mcp_adapter, _initialized_mcp_tools
 
@@ -59,13 +98,20 @@ async def initialize_and_get_mcp_tools() -> List[BaseTool]:
         print("MCP tools not available. Continuing without MCP functionality.")
         return []
 
-    if not _initialized_mcp_tools:
-        print("Initializing MCP Client and getting raw Zapier tools...")
+    if not _initialized_mcp_tools or force_reinit:
+        if force_reinit:
+            print("Force re-initializing MCP Client and getting raw Zapier tools...")
+            # Reset existing connections
+            _mcp_client = None
+            _mcp_adapter = None
+            _initialized_mcp_tools = []
+        else:
+            print("Initializing MCP Client and getting raw Zapier tools...")
         
         try:
             # Ensure config file exists
             # Get config path relative to project root (OS_AGENT directory)
-            config_path = Path(__file__).parent.parent.parent / "browser_mcp.json"
+            config_path = Path(__file__).parent.parent / "browser_mcp.json"
             
             # Load and validate config
             # with open(config_path, 'r') as f:

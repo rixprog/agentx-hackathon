@@ -319,7 +319,7 @@ export const ChatInterface: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-black text-white tracking-wider">
-                  AGENTD CHAT
+                  AXIOM CHAT
                 </h1>
                 <p className="text-xs text-gray-300 font-bold">
                   {activeSession ? activeSession.title : 'Select or start a new chat'}
@@ -359,7 +359,7 @@ export const ChatInterface: React.FC = () => {
             <div className="flex items-center justify-center h-full">
               <div className="text-center border-4 border-yellow-300 p-12 bg-black">
                 <h2 className="text-4xl font-black text-yellow-300 mb-4">
-                  WELCOME TO AGENTD
+                  WELCOME TO AXIOM
                 </h2>
                 <p className="text-white font-bold mb-8 text-lg">Start a conversation to explore infinite possibilities</p>
                 <button
@@ -382,7 +382,7 @@ export const ChatInterface: React.FC = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="ASK AGENTD ANYTHING..."
+                  placeholder="ASK AXIOM ANYTHING..."
                   className="w-full resize-none bg-black border-4 border-cyan-400 text-white font-bold text-lg placeholder-gray-500 px-6 py-4 pr-16 min-h-[60px] max-h-32 focus:border-yellow-300 focus:outline-none transition-none"
                   rows={1}
                   style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}

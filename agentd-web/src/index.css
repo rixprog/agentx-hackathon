@@ -653,6 +653,12 @@ button:active,
   animation: shimmer 2s infinite;
 }
 
+/* Progress bar text - ensure white color */
+.message-bubble.agent .message-content .flex.items-center.justify-between span,
+.message-bubble.agent .message-content .flex.items-center.gap-2 div {
+  color: #FFFFFF !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .chat-container {

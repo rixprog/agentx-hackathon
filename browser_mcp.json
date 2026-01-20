@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "zapier": {
-      "url": "your mcp zapier url"
+      "url": "https://actions.zapier.com/mcp/sk-ak-nqOtfY9JWAG90naHOHHow5kRnA/sse"
     },
     "github": {
       "type": "local",
@@ -11,7 +11,7 @@
         "@modelcontextprotocol/server-github"
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "your token"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
       }
     }
   }

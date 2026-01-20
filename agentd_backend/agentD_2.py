@@ -9,7 +9,7 @@ import sqlite3
 import aiosqlite
 from langgraph.prebuilt import ToolNode
 from .terminal_tool import execute_shell_command
-from .zapier_tools import initialize_and_get_mcp_tools 
+from .zapier_tools import initialize_and_get_mcp_tools, is_zapier_related_query
 from .file_tools import get_file_tools, create_file, write_file, read_file, replace_in_file, delete_file
 from .browse_cloud_tool import browse_web_cloud
 from .prompts import SYSTEM_PROMPT
@@ -112,11 +112,19 @@ def init_chat_db():
     conn.commit()
     conn.close()
 
-async def initialize_agent():
-    """Initialize the LangGraph agent with necessary tools and configuration."""
+async def initialize_agent(force_reinit_zapier: bool = False):
+    """Initialize the LangGraph agent with necessary tools and configuration.
+    
+    Args:
+        force_reinit_zapier: If True, forces re-initialization of Zapier tools.
+    """
     global _agent, zapier_tools_list
     
-    if _agent is not None:
+    # If forcing Zapier re-init, reset the agent to rebuild with new tools
+    if force_reinit_zapier:
+        _agent = None
+    
+    if _agent is not None and not force_reinit_zapier:
         return _agent
 
     sqlite_conn = await aiosqlite.connect("memory.sqlite", check_same_thread=False)
@@ -126,7 +134,7 @@ async def initialize_agent():
     init_chat_db()
 
     # Initialize Zapier tools (will return empty list if MCP is not available)
-    zapier_tools_list = await initialize_and_get_mcp_tools()
+    zapier_tools_list = await initialize_and_get_mcp_tools(force_reinit=force_reinit_zapier)
     
     global mcp_active
     mcp_active = len(zapier_tools_list) > 0
@@ -205,14 +213,20 @@ async def initialize_agent():
 
 async def invoke_agent(message: str, config: dict):
     """Invoke the agent with a message and yield progress and response."""
-    global _agent
+    global _agent, zapier_tools_list
     
-    if _agent is None:
+    # Check if the query is Zapier-related and re-initialize Zapier tools if needed
+    if is_zapier_related_query(message):
+        print("Zapier-related query detected. Re-initializing Zapier MCP tools...")
+        # Re-initialize Zapier tools and rebuild agent with updated tools
+        _agent = await initialize_agent(force_reinit_zapier=True)
+        print(f"Re-initialized Zapier tools. Found {len(zapier_tools_list)} tools.")
+    elif _agent is None:
         _agent = await initialize_agent()
 
     # Generate progress steps
     from .progress_gemini import generate_progress_steps
-    progress_steps = generate_progress_steps(message, max_steps=6, mcp_active=mcp_active)
+    progress_steps = generate_progress_steps(message, max_steps=4, mcp_active=mcp_active)
     
     # Yield progress steps
     for i, step in enumerate(progress_steps, 1):

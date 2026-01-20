@@ -81,7 +81,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
 
       {/* Footer */}
       <div className="border-t border-white/20 pt-3 text-center text-xs opacity-70">
-        <p className="m-0 font-medium text-white pixelated">◆ AgentD ◆</p>
+        <p className="m-0 font-medium text-white pixelated">◆ AXIOM ◆</p>
       </div>
     </div>
   );
